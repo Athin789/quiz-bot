@@ -1,4 +1,3 @@
-
 from .constants import BOT_WELCOME_MESSAGE, PYTHON_QUESTION_LIST
 
 
@@ -29,24 +28,22 @@ def generate_bot_responses(message, session):
 
 
 def record_current_answer(answer, current_question_id, session):
-    '''
-    Validates and stores the answer for the current question to django session.
-    '''
-    return True, ""
+    if current_question_id is not None:
+        session["answers"].append(answer)
+        return True, ""
+    else:
+        return False, "No question to answer."
 
 
 def get_next_question(current_question_id):
-    '''
-    Fetches the next question from the PYTHON_QUESTION_LIST based on the current_question_id.
-    '''
-
-    return "dummy question", -1
+    if current_question_id is not None:
+        next_question_id = current_question_id + 1
+        if next_question_id < len(PYTHON_QUESTION_LIST):
+            return PYTHON_QUESTION_LIST[next_question_id], next_question_id
+    return None, -1
 
 
 def generate_final_response(session):
-    '''
-    Creates a final result message including a score based on the answers
-    by the user for questions in the PYTHON_QUESTION_LIST.
-    '''
+    score = len(session.get("answers", []))
+    return f"Your final score is {score} out of {len(PYTHON_QUESTION_LIST)}."
 
-    return "dummy result"
